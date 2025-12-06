@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<link rel="stylesheet" href="/dist/project-template.css">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -8,9 +9,77 @@
 </head>
 <body>
 	<div id="control"></div>
-	<canvas id="canvas"></canvas>
-	<script src="./dist/project-template-dev.js"></script>
-	<script>
-	</script>
+	<script type="module" src="./src/index.js"></script>
+	<div class="header">
+		<div class="button">+</div>
+	</div>
+	<div class="items-list">
+		<div class="item">
+			<img src="/img/basmati-rice-icon.png">
+			<div class="item-texts">
+				<input type="text" value="Basmati Rice">
+				<input type="text" value="बासमती चावल">
+			</div>
+			<div class="item-actions">
+				<button type="button" data-lang="en" data-speak="Basmati Rice">ENG</button>
+				<button type="button" data-lang="hi" data-speak="बासमती चावल">HIN</button>
+			</div>
+		</div>
+		<div class="item">
+			<img src="/img/ghee-icon.png">
+			<div class="item-texts">
+				<input type="text" value="Clarified Butter">
+				<input type="text" value="घी">
+			</div>
+			<div class="item-actions">
+				<button type="button" data-lang="en" data-speak="Clarified Butter">ENG</button>
+				<button type="button" data-lang="hi" data-speak="घी">HIN</button>
+			</div>
+		</div>
+		<div class="item">
+			<img src="/img/sweet-potato-icon.png">
+			<div class="item-texts">
+				<input type="text" value="Sweet Potato">
+				<input type="text" value="शकरकंद">
+			</div>
+			<div class="item-actions">
+				<button type="button" data-lang="en" data-speak="Sweet Potato">ENG</button>
+				<button type="button" data-lang="hi" data-speak="शकरकंद">HIN</button>
+			</div>
+		</div>
+		<div class="item">
+			<img src="/img/tawa-icon.png">
+			<div class="item-texts">
+				<input type="text" value="Frying Pan">
+				<input type="text" value="तवा">
+			</div>
+			<div class="item-actions">
+				<button type="button" data-lang="en" data-speak="Frying Pan">ENG</button>
+				<button type="button" data-lang="hi" data-speak="तवा">HIN</button>
+			</div>
+		</div>
+		<div class="item">
+			<img src="/img/chai-icon.png">
+			<div class="item-texts">
+				<input type="text" value="Tea">
+				<input type="text" value="चाय">
+			</div>
+			<div class="item-actions">
+				<button type="button" data-lang="en" data-speak="Tea">ENG</button>
+				<button type="button" data-lang="hi" data-speak="चाय">HIN</button>
+			</div>
+		</div>
+		<div class="item">
+			<img src="/img/turmeric-icon.png">
+			<div class="item-texts">
+				<input type="text" value="Turmeric">
+				<input type="text" value="हल्दी">
+			</div>
+			<div class="item-actions">
+				<button type="button" data-lang="en" data-speak="Turmeric">ENG</button>
+				<button type="button" data-lang="hi" data-speak="हल्दी">HIN</button>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

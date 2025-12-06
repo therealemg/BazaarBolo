@@ -1,7 +1,7 @@
 // @flow
 
 
-import LatLon from "./latlon";
+import LatLon from "./latlon.js";
 
 /**
  * A `LatLonBounds` represents a geographical bounding box,
@@ -16,7 +16,7 @@ import LatLon from "./latlon";
  */
 export default class LatLonBounds {
 
-	constructor(sw: LatLon, ne: LatLon) {
+	constructor(sw, ne) {
 
 		this.setNorthEastCorner(ne);
 		this.setSouthWestCorner(sw);
@@ -29,7 +29,7 @@ export default class LatLonBounds {
 	 * @param {LatLon} ne
 	 * @returns {LatLonBounds} `this`
 	 */
-	setNorthEastCorner(ne: LatLon) {
+	setNorthEastCorner(ne) {
 
 		this.ne = ne;
 		return this;
@@ -42,7 +42,7 @@ export default class LatLonBounds {
 	 * @param {LatLon} sw
 	 * @returns {LatLonBounds} `this`
 	 */
-	setSouthWestCorner(sw: LatLon) {
+	setSouthWestCorner(sw) {
 
 		this.sw = sw;
 		return this;
@@ -57,7 +57,7 @@ export default class LatLonBounds {
 	 * var llb = new LatLonBounds([-73.9876, 40.7661], [-73.9397, 40.8002]);
 	 * llb.getCenter(); //LatLon {lat: 40.78315, lon: -73.96365 }
 	 */
-	getCenter(): LatLon {
+	getCenter() {
 
 		return new LatLon((this.sw.lat + this.ne.lat) / 2, (this.sw.lon + this.ne.lon) / 2);
 
@@ -68,7 +68,7 @@ export default class LatLonBounds {
 	 *
 	 * @returns {LatLon} The southwest corner of the bounding box.
 	 */
-	getSouthWest(): LatLon {
+	getSouthWest() {
 
 		return this.sw;
 
@@ -79,7 +79,7 @@ export default class LatLonBounds {
 	*
 	* @returns {LatLon} The northeast corner of the bounding box.
 	 */
-	getNorthEast(): LatLon {
+	getNorthEast() {
 
 		return this.ne;
 

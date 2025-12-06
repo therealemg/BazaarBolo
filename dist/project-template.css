@@ -1,0 +1,103 @@
+.items-list {
+  display: flex;
+  flex-wrap: wrap;             /* allows items to wrap to new lines */
+  justify-content: center;     /* centers the rows */
+  gap: 1rem;                   /* space between squares */
+  margin-top: 80px;
+}
+
+.item {
+  flex: 1 1 calc(33.333% - 2rem); /* roughly 3 per row, accounting for gap */
+  max-width: calc(33.333% - 2rem);
+  height: 12em;
+  background: #3498db;
+  border-radius: 8px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding-right: 6rem;         /* reserve space for action buttons */
+  color: white;
+  font-weight: bold;
+  position: relative;
+}
+
+.item img {
+    height: 10em;
+    margin-left: 1em;
+    margin-right: 1.25em;
+}
+
+.item-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  max-width: 12rem;
+}
+
+.item-texts input[type="text"] {
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #0d3b66;
+}
+
+.item-actions {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.item button {
+  background: #fff;
+  color: #3498db;
+  border: none;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.item button:hover {
+  background: #e6f0fb;
+}
+
+/* Optional hover effect */
+.item:hover {
+  background: #2c80b8;
+}
+
+
+.header {
+  position: fixed;        /* stays at top even when scrolling */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;           /* adjust as needed */
+  display: flex;
+  align-items: center;
+  padding: 0 16px;        /* some horizontal padding */
+  background: #111;       /* header background color */
+  z-index: 1000;          /* stay above other content */
+}
+
+/* Button in top-left */
+.header .button {
+  width: 40px;
+  height: 40px;
+  background: #3498db;
+  border-radius: 8px;     /* optional */
+  cursor: pointer;
+  font-size: xx-large;
+}
+
+/* Optional hover effect */
+.header .button:hover {
+  background: #2c80b8;
+}

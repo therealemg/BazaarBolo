@@ -11,7 +11,7 @@
  */
 export default class LatLon {
 
-	constructor(lat: number, lon: number) {
+	constructor(lat, lon) {
 
 		const areNumbers = !(isNaN(lat) || isNaN(lon));
 		if (areNumbers) {
@@ -42,7 +42,7 @@ export default class LatLon {
 	 * @param {number} lat
 	 * @returns {LatLon} `this`
 	 */
-	setLatitude(lat: number) {
+	setLatitude(lat) {
 
 		this.lat = lat;
 		return this;
@@ -55,7 +55,7 @@ export default class LatLon {
 	 * @param {number} lon
 	 * @returns {LatLon} `this`
 	 */
-	setLongitude(lon: number) {
+	setLongitude(lon) {
 
 		this.lon = lon;
 		return this;

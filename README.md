@@ -1,57 +1,178 @@
-# Javascript Project Template
+# BazaarBolo — Voice-Ready Item Cards
 
-Base javascript project with a default configuration
+A small browser experience that lets you browse a list of items, edit their English/Hindi labels, and trigger text-to-speech (TTS) in each language. A glowing, card-based UI showcases the items; you can also add new items via the top-left “+” control using simple prompts.
 
-* Uses [unassert](https://github.com/unassert-js/unassert) to encourage programming with assertions
-* Generates a single file package using [browserify](http://browserify.org/)
-* Uses [st](https://github.com/isaacs/st) to provide a server to serve static files for quick debugging of the package
-* Uses [documentation.js](https://github.com/documentationjs/documentation) to generate a JSON file to be consumed by another package (see the [documenting the code](#documentation) section) (TODO: Ingest it with [@mapbox/batfish](https://github.com/mapbox/batfish)?)
-* Uses [eslint](https://eslint.org/) to perform static analysis in code
-* Uses [flow](https://flow.org/) to check types (see the [using types](#types) section)
-* Uses [node-tap](https://github.com/tapjs/node-tap) for testing (see the [writting tests](#testing) section)
-* Uses [nyc](https://github.com/istanbuljs/nyc) to run Istanbul's coverage testing
-* Provides a small source file and its corresponding test as an example
+This README is intentionally long and detailed. It explains what the app does, how to run and build it, where things live, how the TTS wiring works, and how to extend or debug it.
 
-## <a name="documentation"></a>Documenting the code
-The documentation follows the [JSDoc](http://usejsdoc.org/about-getting-started.html) syntax. 
+---
 
-To get started you can read the documentation.js start guide [here](https://github.com/documentationjs/documentation/blob/master/docs/GETTING_STARTED.md) or take a look at the provided example file [here](https://github.com/geostarters/js-project-template/blob/master/src/geo/latlon.js)
+## Quick Start
 
-## <a name="types"></a>Using types
-Using flow provides a way to check for common syntax errors while calling functions. Flow provides a simple example of which kind of problems it can solve in their [Type Annotations guide](https://flow.org/en/docs/types/). There's also a list of annotations it supports there.
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## <a name="testing"></a>Writting tests
-[Node-tap](https://github.com/tapjs/node-tap) implements the [Test Anything Protocol](https://testanything.org/).
+2. **Run the dev server**
+   ```bash
+   npm start
+   ```
+   By default this serves `index.html` from the project root (often on `http://localhost:15500` or similar if using the provided static server).
 
-Take a look at the [Node-tap API](http://www.node-tap.org/api/) to check all the supported functions. 
+3. **Open the app**
+   Visit the served URL in a modern browser (Chrome recommended for Web Speech API support).
 
-Check the provided [example file](https://github.com/geostarters/js-project-template/blob/master/test/unit/latlon.test.js) to see how node-tap testing looks.
+You should see a glowing purple background with a grid of item cards, each showing a placeholder image, two text inputs (English/Hindi), and ENG/HIN buttons that speak the current label.
 
-Run the [testing coverage]() script to see which percentage of code is being tested. Aim for the moon, bigger is obviously better.
+---
 
-## Provided scripts
+## What You Get Out of the Box
 
-* __build-dev__: Creates a single file package with all the assertions intact. 
-* __watch-dev__: Watches the source
-* __build-min__: Creates a minified package with its map file and without assertions
-* __start-server__: Starts a debug server on the current directory
-* __start__: Watches the source for changes and runs the debug server
-* __build-docs__: Generates the documentation file
-* __lint__: Checks the code linting
-* __lint-docs__: Lints the documentation files
-* __test__: Runs the static type checker and runs the tests
-* __test-unit__: Runs the unit tests
-* __test-flow__: Runs the static type checks
-* __test-cov__: Runs the testing coverage
-* __pre-production__: Runs all the required scripts to check if the code is ready for production
+- **Interactive cards**: Each item shows an image, two editable text inputs, and language-specific TTS buttons.
+- **Speech synthesis**: The browser’s Web Speech API speaks English or Hindi phrases.
+- **Dynamic item creation**: Click the top-left “+” to add a new item via prompts (English text, Hindi text, and an optional image URL; defaults to `/img/placeholder.png`).
+- **Glowing UI**: Inspired by neon gradients; cards have soft glows, buttons shimmer on hover, and the layout remains unchanged while the styling is upgraded.
+- **Keyboard-friendly inputs**: Edit text directly; buttons stay wired via event delegation so new cards work without extra code.
 
-## Folder structure
-__debug:__ Contains a simple html file that loads the generated package file. All the functionalities should have an html file here demoing how it works
+---
 
-__dist:__ Contains the built files generated by the scripts (dev package, minified package and map)
+## Project Structure
 
-__src:__ Contains an index file that requires all the modules that should be exported and all the source files that compound the package.
+- `index.html` — Entry point, markup for header and the item grid. Links the stylesheet and the module script.
+- `dist/project-template.css` — Main styles: gradients, glowing cards, button states, responsive rules.
+- `src/index.js` — All runtime logic: TTS helper, event delegation for buttons, “+” prompt flow, dynamic item creation. Also exports `LatLon`/`LatLonBounds` from the legacy geo utilities.
+- `src/geo/latlon.js` / `src/geo/latlonBounds.js` — Simple Lat/Lon helpers kept for compatibility; not used by the UI but still exported.
+- `img/placeholder.png` — Default image used when none is provided.
+- `package.json` — Scripts and dependency manifest.
 
-__test:__ Contains the unit and integration tests
+---
 
+## How the UI Is Laid Out
+
+- **Header**: Fixed near the top with a “+” button on the left. The header remains in place; only visuals were enhanced (glow, gradient).
+- **Items grid**: A flex-wrapped layout (`.items-list`) where each `.item` keeps its position; styling adds glassy panels and glow but no structural changes.
+- **Card contents**:
+  - Image on the left (defaults to `/img/placeholder.png`).
+  - Two stacked text inputs: English (top) and Hindi (bottom).
+  - Vertical action buttons on the right: ENG and HIN.
+
+---
+
+## Text-to-Speech (TTS) Details
+
+Location: `src/index.js`
+
+- `speak(text, { lang, rate, pitch, volume })`
+  - Uses `window.speechSynthesis` and `SpeechSynthesisUtterance`.
+  - Chooses a voice that matches `lang` prefix (e.g., `"en"` or `"hi"`), falling back to the first available voice.
+  - Cancels any ongoing speech before speaking the new utterance.
+
+- **Button wiring**
+  - Event delegation on `.items-list`: `handleItemButtonClick` catches clicks on `.item-actions button`.
+  - Spoken text comes from `data-speak` (or `data-phrase`/button text as fallback).
+  - Language is determined by `data-lang` (e.g., `"en"` or `"hi"`).
+
+- **Dynamic items**
+  - When you create a new item, ENG/HIN buttons are created with `data-lang` and `data-speak` set to the provided inputs, so TTS works immediately.
+
+Browser support caveat: The Web Speech API is best supported in Chromium-based browsers. If voices are unavailable, the code logs to console instead.
+
+---
+
+## Adding a New Item (UI Flow)
+
+1. Click the **“+”** button in the top-left header.
+2. You’ll be prompted for:
+   - **English text** (default: “New item”)
+   - **Hindi text** (default: “नया आइटम”)
+   - **Image URL** (default: `/img/placeholder.png`)
+3. On completion, a new card is appended to `.items-list` with:
+   - The provided image URL (or placeholder).
+   - Two inputs prefilled with your English/Hindi text.
+   - ENG/HIN buttons wired for TTS with those phrases.
+
+---
+
+## Customizing Content
+
+- **Change spoken phrases**: Edit `data-speak` on each ENG/HIN button in `index.html`. Dynamic items take their `data-speak` from the prompt values.
+- **Change default image**: Update the fallback in `src/index.js` (`createItem`) and/or the hardcoded `src` values in `index.html`.
+- **Edit displayed labels**: The inputs are live in the DOM; you can type directly. (By default, `data-speak` is set at creation; we can extend to sync on blur if desired.)
+
+---
+
+## Styling Notes
+
+- Gradients and glows are defined in `dist/project-template.css`.
+- Cards: rounded corners, subtle borders, inset highlights, hover glow.
+- Buttons: linear gradient fill with a luminous hover shadow.
+- Responsive behavior:
+  - Desktop: 3 cards per row (flex wrap).
+  - Medium screens: 2 per row.
+  - Small screens: single column, smaller images, horizontal button grouping.
+
+If you want to tweak the theme, adjust the CSS variables at the top of `dist/project-template.css` (colors, shadows, radii).
+
+---
+
+## Scripts (package.json)
+
+Typical scripts from the starter template (may vary slightly):
+
+- `npm start` — Starts the static server and watches sources.
+- `npm run build-dev` — Browserify bundle with assertions intact.
+- `npm run watch-dev` — Watch-and-build.
+- `npm run build-min` — Minified bundle and sourcemap.
+- `npm run build-docs` — Generates documentation JSON (documentation.js).
+- `npm run lint` / `npm run lint-docs` — Lint code and docs.
+- `npm test` / `npm run test-unit` / `npm run test-flow` / `npm run test-cov` — Tests and coverage.
+- `npm run pre-production` — Aggregate checks before release.
+
+Check `package.json` to confirm exact script names in your clone.
+
+---
+
+## Development Workflow
+
+1. **Run the dev server** (`npm start`) and open the app.
+2. **Edit HTML/CSS** for layout or theming.
+3. **Edit `src/index.js`** for behavior (prompts, TTS logic, event wiring).
+4. **Add assets** under `img/` (e.g., replace `placeholder.png`).
+5. **Test TTS** in Chrome; check console if speech fails (voice availability varies).
+
+---
+
+## Extending the App
+
+- **Sync inputs to TTS on change**: Add `input`/`blur` listeners to update `data-speak` so the latest typed text is spoken.
+- **Support more languages**: Add more buttons per card with appropriate `data-lang` codes and `data-speak` phrases.
+- **Persist items**: Save items to `localStorage` or a backend and hydrate on load.
+- **Image upload**: Replace the URL prompt with a file selector and object URLs.
+
+---
+
+## Troubleshooting
+
+- **TTS not speaking**: Ensure the browser supports Web Speech API; try Chrome. Wait for voices to load (handled via `onvoiceschanged`).
+- **Broken images**: Check the image URL or replace `placeholder.png` with a valid asset.
+- **Buttons not working on new items**: Event delegation on `.items-list` should cover new items; confirm the container has the correct class.
+- **Imports failing**: Module imports use explicit `.js` extensions (e.g., `./geo/latlon.js`). Ensure you serve via a local server, not `file://`.
+
+---
+
+## Folder Structure (Current)
+
+- `index.html` — UI markup, header, items grid.
+- `dist/project-template.css` — All styling for layout, glow, responsiveness.
+- `src/index.js` — Runtime logic (TTS, prompts, dynamic items), plus exports of geo utilities.
+- `src/geo/latlon.js`, `src/geo/latlonBounds.js` — Legacy geo helpers.
+- `img/placeholder.png` — Default image for items.
+- `package.json` / `package-lock.json` — Dependencies and scripts.
+- `build/`, `debug/`, `dist/` — Output and debug assets (depending on scripts run).
+
+---
+
+## License
+
+See `LICENSE` for details. This project started from a JavaScript template and has been customized with a glowing UI and TTS interaction layer.
 

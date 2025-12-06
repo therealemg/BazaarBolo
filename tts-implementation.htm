@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TTS Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      max-width: 600px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Text-to-Speech Demo</h2>
+
+  <label for="text">Text to speak:</label>
+  <textarea id="text" style="width:100%; height:80px;">Hello from the browser</textarea>
+
+  <label for="voice">Voice:</label>
+  <select id="voice"></select>
+
+  <label>Rate: <span id="rateValue">1</span></label>
+  <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+
+  <label>Pitch: <span id="pitchValue">1</span></label>
+  <input type="range" id="pitch" min="0" max="2" step="0.1" value="1">
+
+  <label>Volume: <span id="volumeValue">1</span></label>
+  <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+
+  <button id="speak">Speak</button>
+
+  <script>
+    // Load available voices into dropdown
+    const voiceSelect = document.getElementById('voice');
+
+    function loadVoices() {
+      const voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+
+      voices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    // Chrome loads voices asynchronously
+    speechSynthesis.onvoiceschanged = loadVoices;
+
+    // Update labels for sliders
+    const rate = document.getElementById('rate');
+    const pitch = document.getElementById('pitch');
+    const volume = document.getElementById('volume');
+
+    rate.oninput = () => document.getElementById('rateValue').textContent = rate.value;
+    pitch.oninput = () => document.getElementById('pitchValue').textContent = pitch.value;
+    volume.oninput = () => document.getElementById('volumeValue').textContent = volume.value;
+
+    // Speak function
+    function speak(text, settings) {
+      if (!('speechSynthesis' in window)) {
+        alert('Speech Synthesis is not supported in this browser.');
+        return;
+      }
+
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.voice = speechSynthesis.getVoices()[settings.voiceIndex];
+      utter.rate = settings.rate;
+      utter.pitch = settings.pitch;
+      utter.volume = settings.volume;
+
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utter);
+    }
+
+    // Handle Speak button
+    document.getElementById('speak').addEventListener('click', () => {
+      speak(document.getElementById('text').value, {
+        voiceIndex: voiceSelect.value,
+        rate: parseFloat(rate.value),
+        pitch: parseFloat(pitch.value),
+        volume: parseFloat(volume.value)
+      });
+    });
+  </script>
+
+</body>
+</html>
